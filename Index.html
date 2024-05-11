@@ -1,0 +1,70 @@
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <!-- <script src="https://cdn.jsdelivr.net/gh/hiukim/mind-ar-js@1.1.5/dist/mindar-image.prod.js"></script> -->
+    <!-- <script src="https://cdn.jsdelivr.net/gh/hiukim/mind-ar-js@1.1.5/dist/mindar-image-aframe.prod.js"></script> -->
+    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.2/dist/mindar-image-aframe.prod.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/c-frame/aframe-extras@7.2.0/dist/aframe-extras.min.js"></script>
+
+    <script src="./petal-spawner.js"></script>
+    <script>
+        AFRAME.registerComponent('mytarget', {
+            init: function () {
+                this.model = document.getElementById("3dmodel");
+
+                this.el.addEventListener('targetFound', event => {
+                    console.log("target found");
+                    this.model.setAttribute('animation', {
+                        property: 'scale',
+                        to: '2 2 2',
+                        easing: 'easeOutElastic',
+                        dur: 800,
+                    })
+                });
+
+                this.el.addEventListener('targetLost', event => {
+                    console.log("target Lost");
+                    this.model.object3D.scale.set(0.01, 0.01, 0.01)
+                    this.model.removeAttribute('animation')
+                });
+            }
+        });
+        document.addEventListener("DOMContentLoaded", function () {
+
+        });
+    </script>
+</head>
+
+<body>
+    <a-scene pool="mixin: petal-model; size: 17" mindar-image="imageTargetSrc: /Assets/Targets.mind;" color-space="sRGB"
+        renderer="colorManagement: true, physicallyCorrectLights" vr-mode-ui="enabled: false"
+        device-orientation-permission-ui="enabled: false">
+        <a-assets>
+            <video id="CardARVideo" loop="false" src="/Assets/VideoARCard.mp4"></video>
+            <a-asset-item id="PetalsModel" src="/Assets/fallpetal.glb"></a-asset-item>
+            <a-asset-item id="RoseModel" src="/Assets/bouquet_of_red_roses.glb"></a-asset-item>
+            <a-asset-item id="felizdiaModel" src="/Assets/felizdia.glb"></a-asset-item>
+            <!-- <a-mixin id="petal-model" gltf-model="#Rose"></a-mixin> -->
+        </a-assets>
+
+        <a-camera position="0 0 0" look-controls="enabled: false" cursor="fuse: false; rayOrigin: mouse;"
+            raycaster="far: ${customFields.libVersion}; objects: .clickable"></a-camera>
+        <a-entity id="mytarget" mytarget mindar-image-target="targetIndex: 0">
+            <a-entity id="3dmodel" scale="0.01 0.01 0.01">
+
+                <a-entity id="petals" animation-mixer="loop: repeat" scale="0.22 0.22 0.22" gltf-model="#PetalsModel"
+                    position="0 0 -0.2" rotation="90 0 0"></a-entity>
+
+                <a-entity id="rose" scale="0.7 0.7 0.7" gltf-model="#RoseModel" position="-0.25 0.2 0"
+                    rotation="90 0 0"></a-entity>
+                <a-entity gltf-model="#felizdiaModel" position="0 -0.15 0" rotation="0 -90 -30"
+                    scale="0.1 0.1 0.1"></a-entity>
+            </a-entity>
+        </a-entity>
+    </a-scene>
+</body>
+
+</html>
